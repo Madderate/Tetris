@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "Tetris"
 include(":app")
 include(":ui")
+include(":data")

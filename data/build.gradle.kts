@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.madderate.ui"
+    namespace = "com.madderate.data"
     compileSdk = 34
 
     defaultConfig {
@@ -31,28 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
-    }
 }
 
 dependencies {
-    implementation(project(":data"))
-
-    implementation(libs.material)
-
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.compose.material3)
-
-    debugImplementation(libs.ui.tooling)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 }

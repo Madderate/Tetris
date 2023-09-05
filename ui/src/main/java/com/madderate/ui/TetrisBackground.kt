@@ -27,7 +27,9 @@ fun TetrisBackgroundPreview() {
         TetrisBackground(
             modifier = Modifier
                 .padding(top = 16.dp)
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.8f),
+            rowCount = 22,
+            columnCount = 12
         )
     }
 }
@@ -35,25 +37,21 @@ fun TetrisBackgroundPreview() {
 @Composable
 fun TetrisBackground(
     modifier: Modifier = Modifier,
-    lineCount: Int = 22,
-    rowCount: Int = 12,
+    rowCount: Int,
+    columnCount: Int,
 ) {
     Box(modifier = modifier) {
-        val canvasRatio = rowCount.toFloat() / lineCount
+        val canvasRatio = columnCount.toFloat() / rowCount
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(ratio = canvasRatio),
         ) {
-            val (width, height) = size
-            val cellSize = width / rowCount
-            val cellSizeForCheck = height / lineCount
-            val hasCorrectSize = cellSize == cellSizeForCheck
-            check(hasCorrectSize) {
-                "Incorrect size! width=$width, height=$height, but cellSize=$cellSize, cellSizeForCheck=$cellSizeForCheck"
-            }
+            val cellSize = getCellSizeOrThrowWith(rowCount = rowCount, columnCount = columnCount)
 
-            for (i in 0..lineCount) {
+            val (width, height) = size
+
+            for (i in 0..rowCount) {
                 val gapSize = cellSize * i
                 drawLine(
                     canvasWidth = width,
@@ -62,7 +60,7 @@ fun TetrisBackground(
                     gapSize = gapSize
                 )
             }
-            for (i in 0..rowCount) {
+            for (i in 0..columnCount) {
                 val gapSize = cellSize * i
                 drawLine(
                     canvasWidth = width,
