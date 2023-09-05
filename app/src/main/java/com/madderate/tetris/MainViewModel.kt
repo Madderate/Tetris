@@ -7,10 +7,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 class MainViewModel(
     application: Application,
@@ -23,15 +25,23 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            val tetrisCellImplList = withContext(Dispatchers.Default) {
-                val cell = TetrisCellImpl(
-                    position = Offset(0f, 0f),
-                    color = Color(red = 0xaf, green = 0xaa, blue = 0x80)
+            while (true) {
+                val cell = tetris.value?.cells?.firstOrNull() ?: withContext(Dispatchers.Default) {
+                    TetrisCellImpl(
+                        position = Offset(-1f, -1f),
+                        color = Color(red = 0xaf, green = 0xaa, blue = 0x80)
+                    )
+                }
+                val oldPosition = cell.position
+                val newPosition = oldPosition.copy(
+                    x = ((oldPosition.x + 1f).roundToInt() % TETRIS_COLUMN_COUNT).toFloat(),
+                    y = ((oldPosition.y + 1f).roundToInt() % TETRIS_ROW_COUNT).toFloat(),
                 )
-                listOf(cell)
+                val newCell = (cell as TetrisCellImpl).copy(position = newPosition)
+                val newTetris = TetrisImpl(listOf(newCell))
+                _tetris.value = newTetris
+                delay(1000L)
             }
-            val tetrisImpl = TetrisImpl(tetrisCellImplList)
-            _tetris.value = tetrisImpl
         }
     }
 }
