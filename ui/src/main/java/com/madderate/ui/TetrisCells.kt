@@ -10,14 +10,19 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.madderate.data.Directions
 import com.madderate.data.Tetris
 import com.madderate.data.TetrisCell
 
-private data class TetrisImpl(
+private data class TempTetrisImpl(
     override val cells: List<TetrisCell>
-) : Tetris
+) : Tetris {
+    override fun moveCells(to: Directions): Tetris {
+        TODO("No need to implement")
+    }
+}
 
-private data class TetrisCellImpl(
+private data class TempTetrisCellImpl(
     override val position: Offset = Offset(0f, 0f),
     override val color: Color = Color.Yellow,
 ) : TetrisCell
@@ -27,9 +32,9 @@ private data class TetrisCellImpl(
 @Composable
 fun TetrisCellsPreview() {
     val tetrisCells = listOf(
-        TetrisCellImpl()
+        TempTetrisCellImpl()
     )
-    val tetris = TetrisImpl(tetrisCells)
+    val tetris = TempTetrisImpl(tetrisCells)
     TetrisCells(
         modifier = Modifier.fillMaxWidth(),
         rowCount = 22,

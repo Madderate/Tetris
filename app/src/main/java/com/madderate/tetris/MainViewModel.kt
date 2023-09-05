@@ -1,11 +1,14 @@
 package com.madderate.tetris
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.madderate.data.Directions
+import com.madderate.data.Tetris
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,30 +21,49 @@ class MainViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle,
 ) : AndroidViewModel(application) {
-    private val _tetris = MutableStateFlow<TetrisImpl?>(null)
-    val tetris: StateFlow<TetrisImpl?>
-        get() = _tetris
+    private var isFinished = false
+
+    private val _tetrisState = MutableStateFlow<Tetris?>(null)
+    val tetrisState: StateFlow<Tetris?>
+        get() = _tetrisState
 
 
     init {
         viewModelScope.launch {
             while (true) {
-                val cell = tetris.value?.cells?.firstOrNull() ?: withContext(Dispatchers.Default) {
+                val existedTetrisCell = tetrisState.value?.cells?.firstOrNull()
+                val cell = existedTetrisCell ?: withContext(Dispatchers.Default) {
+                    val cellX = (TETRIS_COLUMN_COUNT shr 1).toFloat()
                     TetrisCellImpl(
-                        position = Offset(-1f, -1f),
+                        position = Offset(x = cellX, y = -1f),
                         color = Color(red = 0xaf, green = 0xaa, blue = 0x80)
                     )
                 }
                 val oldPosition = cell.position
-                val newPosition = oldPosition.copy(
-                    x = ((oldPosition.x + 1f).roundToInt() % TETRIS_COLUMN_COUNT).toFloat(),
-                    y = ((oldPosition.y + 1f).roundToInt() % TETRIS_ROW_COUNT).toFloat(),
-                )
+                if (oldPosition.y >= TETRIS_ROW_COUNT - 1) {
+                    Log.i("GAME", "At Bottom!")
+                    isFinished = true
+                    break
+                }
+
+                val newPositionY = ((oldPosition.y + 1f).roundToInt() % TETRIS_ROW_COUNT).toFloat()
+                val newPosition = oldPosition.copy(y = newPositionY)
                 val newCell = (cell as TetrisCellImpl).copy(position = newPosition)
                 val newTetris = TetrisImpl(listOf(newCell))
-                _tetris.value = newTetris
+                _tetrisState.value = newTetris
                 delay(1000L)
             }
         }
+    }
+
+
+    fun moveTetris(to: Directions) {
+        if (isFinished) {
+            return
+        }
+
+        val oldTetris = tetrisState.value ?: return
+        val newTetris = oldTetris.moveCells(to)
+        _tetrisState.value = newTetris
     }
 }

@@ -11,14 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.madderate.data.Directions
 import com.madderate.ui.BaseActivity
 import com.madderate.ui.TetrisBackground
 import com.madderate.ui.TetrisCells
@@ -36,8 +35,8 @@ class MainActivity : BaseActivity() {
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        val viewModel: MainViewModel = viewModel()
-                        val tetris by viewModel.tetris.collectAsState()
+                        val mainViewModel: MainViewModel = viewModel()
+                        val tetris by mainViewModel.tetrisState.collectAsState()
                         Box(
                             modifier = Modifier
                                 .statusBarsPadding()
@@ -60,35 +59,19 @@ class MainActivity : BaseActivity() {
                         TetrisController(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .navigationBarsPadding()
+                                .navigationBarsPadding(),
+                            moveLeft = {
+                                mainViewModel.moveTetris(Directions.Left)
+                            },
+                            moveRight = {
+                                mainViewModel.moveTetris(Directions.Right)
+                            },
+                            moveDown = {
+                                mainViewModel.moveTetris(Directions.Down)
+                            }
                         )
                     }
                 }
-            }
-        }
-    }
-}
-
-
-@Preview(showSystemUi = true)
-@Composable
-fun MainPagePreview() {
-    TetrisTheme {
-        // A surface container using the 'background' color from the theme
-        Surface {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                TetrisBackground(
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        .padding(top = 16.dp)
-                        .fillMaxWidth(0.8f),
-                    rowCount = TETRIS_ROW_COUNT,
-                    columnCount = TETRIS_COLUMN_COUNT,
-                )
-                TetrisController(modifier = Modifier.fillMaxSize())
             }
         }
     }

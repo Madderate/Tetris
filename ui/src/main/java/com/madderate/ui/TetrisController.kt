@@ -29,11 +29,21 @@ import androidx.compose.ui.unit.dp
 @Preview
 @Composable
 fun TetrisControllerPreview() {
-    TetrisController(modifier = Modifier.fillMaxWidth())
+    TetrisController(
+        modifier = Modifier.fillMaxWidth(),
+        moveLeft = {},
+        moveRight = {},
+        moveDown = {},
+    )
 }
 
 @Composable
-fun TetrisController(modifier: Modifier = Modifier) {
+fun TetrisController(
+    modifier: Modifier = Modifier,
+    moveLeft: () -> Unit,
+    moveRight: () -> Unit,
+    moveDown: () -> Unit,
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -81,7 +91,9 @@ fun TetrisController(modifier: Modifier = Modifier) {
             IconButton(
                 modifier = Modifier
                     .fillMaxWidth(1f / 3),
-                onClick = { /*TODO*/ }) {
+                onClick = {
+                    moveLeft()
+                }) {
                 Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "左")
             }
             Box(
@@ -96,14 +108,18 @@ fun TetrisController(modifier: Modifier = Modifier) {
                 }
                 IconButton(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    onClick = { /*TODO*/ }) {
+                    onClick = {
+                        moveDown()
+                    }) {
                     Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = "下")
                 }
             }
             IconButton(
                 modifier = Modifier
                     .fillMaxWidth(),
-                onClick = { /*TODO*/ }) {
+                onClick = {
+                    moveRight()
+                }) {
                 Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = "右")
             }
         }
