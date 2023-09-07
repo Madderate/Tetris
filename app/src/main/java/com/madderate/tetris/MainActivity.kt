@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.madderate.data.Directions
+import com.madderate.data.TETRIS_COLUMN_COUNT
+import com.madderate.data.TETRIS_ROW_COUNT
 import com.madderate.ui.BaseActivity
 import com.madderate.ui.TetrisBackground
 import com.madderate.ui.TetrisCells

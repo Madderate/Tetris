@@ -8,7 +8,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.madderate.data.Directions
+import com.madderate.data.TETRIS_COLUMN_COUNT
+import com.madderate.data.TETRIS_ROW_COUNT
 import com.madderate.data.Tetris
+import com.madderate.data.TetrisCell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +37,7 @@ class MainViewModel(
                 val existedTetrisCell = tetrisState.value?.cells?.firstOrNull()
                 val cell = existedTetrisCell ?: withContext(Dispatchers.Default) {
                     val cellX = (TETRIS_COLUMN_COUNT shr 1).toFloat()
-                    TetrisCellImpl(
+                    TetrisCell(
                         position = Offset(x = cellX, y = -1f),
                         color = Color(red = 0xaf, green = 0xaa, blue = 0x80)
                     )
@@ -48,8 +51,8 @@ class MainViewModel(
 
                 val newPositionY = ((oldPosition.y + 1f).roundToInt() % TETRIS_ROW_COUNT).toFloat()
                 val newPosition = oldPosition.copy(y = newPositionY)
-                val newCell = (cell as TetrisCellImpl).copy(position = newPosition)
-                val newTetris = TetrisImpl(listOf(newCell))
+                val newCell = cell.copy(position = newPosition)
+                val newTetris = Tetris(listOf(newCell))
                 _tetrisState.value = newTetris
                 delay(1000L)
             }
