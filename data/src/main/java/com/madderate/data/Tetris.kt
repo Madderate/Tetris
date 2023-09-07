@@ -5,6 +5,10 @@ import androidx.compose.ui.geometry.Offset
 data class Tetris(val cells: List<TetrisCell>) {
 
     fun moveCells(to: Directions): Tetris {
+        if (!canMoveCells(to)) {
+            throw IllegalStateException("Unable to move! Please check whether this Tetris($this) can move to $to before move cells!")
+        }
+
         val newCells = cells.map {
             val oldPosition = it.position
             val newPosition = when (to) {
@@ -15,6 +19,41 @@ data class Tetris(val cells: List<TetrisCell>) {
             it.copy(position = newPosition)
         }
         return Tetris(newCells)
+    }
+
+    fun canMoveCells(to: Directions): Boolean = when (to) {
+        Directions.Left -> {
+            var farLeft = Float.MAX_VALUE
+            for (cell in cells) {
+                val cellX = cell.position.x
+                val isFarLeft = cellX < farLeft
+                if (!isFarLeft) continue
+                farLeft = cellX
+            }
+            farLeft > 0f // > 0f: 可以左移；<= 0f：已经在最左边了，不能左移
+        }
+
+        Directions.Right -> {
+            var farRight = Float.MIN_VALUE
+            for (cell in cells) {
+                val cellX = cell.position.x
+                val isFarRight = cellX > farRight
+                if (!isFarRight) continue
+                farRight = cellX
+            }
+            farRight < TETRIS_COLUMN_COUNT - 1
+        }
+
+        Directions.Down -> {
+            var bottom = Float.MIN_VALUE
+            for (cell in cells) {
+                val cellY = cell.position.y
+                val isDowner = cellY > bottom
+                if (!isDowner) continue
+                bottom = cellY
+            }
+            bottom < TETRIS_ROW_COUNT - 1
+        }
     }
 }
 
