@@ -10,24 +10,21 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.madderate.data.Tetris
 import com.madderate.data.TetrisCell
 
 @Preview(showSystemUi = true)
 @Composable
 fun TetrisCellsPreview() {
-    val tetrisCells = listOf(
-        TetrisCell(
-            position = Offset(0f, 0f),
-            color = Color.Yellow,
-        )
-    )
-    val tetris = Tetris(tetrisCells)
     TetrisCells(
         modifier = Modifier.fillMaxWidth(),
         rowCount = 22,
         columnCount = 12,
-        tetris = tetris
+        cells = listOf(
+            TetrisCell(
+                position = Offset(0f, 0f),
+                color = Color.Yellow,
+            )
+        )
     )
 }
 
@@ -36,9 +33,9 @@ fun TetrisCells(
     modifier: Modifier = Modifier,
     rowCount: Int,
     columnCount: Int,
-    tetris: Tetris?
+    cells: List<TetrisCell>?
 ) {
-    if (tetris == null) {
+    if (cells.isNullOrEmpty()) {
         return
     }
 
@@ -50,7 +47,7 @@ fun TetrisCells(
                 .aspectRatio(canvasRatio),
         ) {
             val cellSize = getCellSizeOrThrowWith(rowCount = rowCount, columnCount = columnCount)
-            for (cell in tetris.cells) {
+            for (cell in cells) {
                 val (x, y) = cell.position
                 drawRect(
                     color = cell.color,
