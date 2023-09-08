@@ -55,7 +55,7 @@ class MainActivity : BaseActivity() {
                                 rowCount = TETRIS_ROW_COUNT,
                                 columnCount = TETRIS_COLUMN_COUNT,
                             )
-                            FilledCells(
+                            StableCells(
                                 modifier = Modifier.fillMaxWidth(),
                                 cellsState = cellsState,
                                 stableCells = mainViewModel.stableCells,
@@ -88,30 +88,29 @@ class MainActivity : BaseActivity() {
 
 
 @Composable
-fun FilledCells(
+fun StableCells(
     modifier: Modifier = Modifier,
     cellsState: CellsState,
     stableCells: Array<Array<TetrisCell?>>,
 ) {
-    when (cellsState) {
-        Empty -> return
-        is Put -> {
-            val cells = stableCells.flatMap { column ->
-                column.mapNotNull { it }
-            }
-            val isCorrectStableCellCount = cells.count() == cellsState.cellCount
-            if (!isCorrectStableCellCount) {
-                return
-            }
-
-            TetrisCells(
-                modifier = modifier,
-                rowCount = TETRIS_ROW_COUNT,
-                columnCount = TETRIS_COLUMN_COUNT,
-                cells = cells,
-            )
-        }
+    if (cellsState !is Put) {
+        return
     }
+
+    val cells = stableCells.flatMap { column ->
+        column.mapNotNull { it }
+    }
+    val isCorrectStableCellCount = cells.count() == cellsState.cellCount
+    if (!isCorrectStableCellCount) {
+        return
+    }
+
+    TetrisCells(
+        modifier = modifier,
+        rowCount = TETRIS_ROW_COUNT,
+        columnCount = TETRIS_COLUMN_COUNT,
+        cells = cells,
+    )
 }
 
 @Composable
